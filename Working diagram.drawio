@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-03-10T14:48:28.761Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36" etag="6BLV_7TqxQ4ZJycwWxKV" version="21.0.6" type="github">
+<mxfile host="app.diagrams.net" modified="2023-03-10T14:59:36.563Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36" etag="NMiPQttSE4yfhI4FPmqY" version="21.0.6" type="github">
   <diagram name="Page-1" id="BUAs6Dl8SAh3-mOi4Xi8">
     <mxGraphModel dx="880" dy="484" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -77,6 +77,12 @@
         </mxCell>
         <mxCell id="c9DYXGlkIHO3AR9IcxED-27" value="Load" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1060" y="70" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="7erlhkqWnkTEHRErr0Er-6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="7erlhkqWnkTEHRErr0Er-4" target="c9DYXGlkIHO3AR9IcxED-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="7erlhkqWnkTEHRErr0Er-4" value="Sensor tegangan PLN" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="210" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
