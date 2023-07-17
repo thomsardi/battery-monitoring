@@ -28,11 +28,14 @@ char auth[] = "sGZwg34WR9aDxtGkJDJz4adtpwAgfzpj";
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-const char *ssid = "fh_239b68";
-const char *pass = "wlandc6497";
+// const char *ssid = "fh_239b68";
+// const char *pass = "wlandc6497";
 
-const char *createDatabaseLink = "http://192.168.1.31/mydatabase/createdatabase.php";
-const char *updateLink = "http://192.168.1.31/mydatabase/update.php";
+const char *ssid = "BLACKZONE";
+const char *pass = "tetanggamalingwifi02";
+
+const char *createDatabaseLink = "http://192.168.1.6/mydatabase/createdatabase.php";
+const char *updateLink = "http://192.168.1.6/mydatabase/update.php";
 
 // bq769x0 BMS[3] = {bq769x0(bq76940, BMS_I2C_ADDRESS, 0), bq769x0(bq76940, BMS_I2C_ADDRESS, 1), bq769x0(bq76940, BMS_I2C_ADDRESS, 2)};
 bq769x0 BMS[1] = {bq769x0(bq76940, BMS_I2C_ADDRESS, 0)};
@@ -55,6 +58,30 @@ int mainSig = 32;
 
 int lowVoltage = 34000;
 int highVoltage = 35000;
+
+int cell[15] = {
+  3921,
+  3922,
+  50,
+  49,
+  3711,
+  3636,
+  3636,
+  48,
+  48,
+  4058,
+  3583,
+  3670,
+  49,
+  49,
+  3622
+};
+int vpack;
+int temp[3] = {
+  30,
+  30,
+  27
+};
 
 unsigned long lastTime = 0;
 
@@ -285,6 +312,32 @@ void createDatabase(String link)
   http.end();
 }
 
+String createData()
+{
+  String output;
+  StaticJsonDocument<512> doc;
+  doc["table_name"] = "battery_data_3";
+  JsonArray vcell = doc.createNestedArray("vcell");
+  int cellVoltage;
+  vpack = 0;
+  for (size_t i = 0; i < 15; i++)
+  {
+    cellVoltage = cell[i] + (esp_random() & 0x7);
+    vcell.add(cellVoltage);
+    vpack += cellVoltage;
+  }
+
+  JsonArray temperature = doc.createNestedArray("temp");
+  for (size_t i = 0; i < 3; i++)
+  {
+    temperature.add(temp[i]);
+  }
+  doc["pack"][0] = vpack;
+  serializeJson(doc, output);
+  return output;
+}
+
+
 String buildData()
 {
   String output;
@@ -312,6 +365,26 @@ void postData(String link)
   http.begin(link);
   http.addHeader("Content-Type", "application/json");
   String httpPostData = buildData();;
+  int httpResponseCode = http.POST(httpPostData);
+  Serial.print("HTTP Response code: ");
+  Serial.println(httpResponseCode);
+  if(httpResponseCode == 200)
+  {
+    Serial.println("Success");
+  }
+  else
+  {
+    Serial.println("Failed");
+  }
+  http.end();
+}
+
+void pushData(String link)
+{
+  HTTPClient http;
+  http.begin(link);
+  http.addHeader("Content-Type", "application/json");
+  String httpPostData = createData();;
   int httpResponseCode = http.POST(httpPostData);
   Serial.print("HTTP Response code: ");
   Serial.println(httpResponseCode);
@@ -569,29 +642,29 @@ void setup() {
   // bmsTest.begin(BMS_ALERT_PIN, BMS_BOOT_PIN, &TCA9548A);
   for (int i = 0; i < arrSize; i ++)
   {
-    BMS[i].setI2C(&wire);
+    // BMS[i].setI2C(&wire);
   }
   
   if (!isFinish)
   {
-    Scanner();
+    // Scanner();
   }
 
   int err;
   int lastErr;
   for (int i = 0; i < arrSize; i ++)
   {
-    err = BMS[i].begin(BMS_ALERT_PIN, BMS_BOOT_PIN, &TCA9548A);
-    lastErr = err;
-    err = lastErr | err;
+    // err = BMS[i].begin(BMS_ALERT_PIN, BMS_BOOT_PIN, &TCA9548A);
+    // lastErr = err;
+    // err = lastErr | err;
   }  
   
   if (err)
   {
-    Serial.println("BMS Init Error");
+    // Serial.println("BMS Init Error");
   }
 
-  BMS[0].setCellConfiguration(BMS[0].CELL_9);
+  // BMS[0].setCellConfiguration(BMS[0].CELL_9);
   // BMS[0].setCellConfiguration(BMS[0].CELL_10);
   // BMS[1].setCellConfiguration(BMS[1].CELL_10);
   // BMS[2].setCellConfiguration(BMS[2].CELL_12);
@@ -609,22 +682,28 @@ void setup() {
   // BMS.enableAutoBalancing();
   // BMS.enableDischarging();
 
-  for (int i = 0; i < arrSize; i++)
+  // for (int i = 0; i < arrSize; i++)
+  // {
+  //   Serial.println("BMS " + String(i+1) + " Configuration");
+  //   int data = BMS[i].readReg(SYS_STAT);
+  //   Serial.print("SYS_STAT " + String(i+1) + " : ");
+  //   Serial.println(data, BIN);
+  //   Serial.println("Clearing SYS_STAT " + String(i+1));
+  //   BMS[i].writeReg(SYS_STAT, data);
+  //   data = BMS[i].readReg(SYS_STAT);
+  //   Serial.print("SYS_STAT " + String(i+1) + " : ");
+  //   Serial.println(data, BIN);
+  // }
+  for (size_t i = 0; i < 15; i++)
   {
-    Serial.println("BMS " + String(i+1) + " Configuration");
-    int data = BMS[i].readReg(SYS_STAT);
-    Serial.print("SYS_STAT " + String(i+1) + " : ");
-    Serial.println(data, BIN);
-    Serial.println("Clearing SYS_STAT " + String(i+1));
-    BMS[i].writeReg(SYS_STAT, data);
-    data = BMS[i].readReg(SYS_STAT);
-    Serial.print("SYS_STAT " + String(i+1) + " : ");
-    Serial.println(data, BIN);
+    vpack += cell[i];
   }
+  
   createDatabase(createDatabaseLink);
   server.on("/get-battery-data", HTTP_GET, [](AsyncWebServerRequest *request)
     {
-      String jsonOutput = buildData();
+      // String jsonOutput = buildData();
+      String jsonOutput = createData();
       request->send(200, "application/json", jsonOutput);
     });
 }
@@ -653,11 +732,11 @@ void loop() {
   {
     for (int i = 0; i < arrSize; i ++)
     {
-        BMS[i].update();
+        // BMS[i].update();
     }
     currTime = millis();
     isFirstRun = false;
-    packVoltage = BMS[0].getBatteryVoltage();
+    // packVoltage = BMS[0].getBatteryVoltage();
   }
 
   if ((millis() - currTime) > 250 )
@@ -667,8 +746,8 @@ void loop() {
         BMS[i].update();
     }
     currTime = millis();
-    packVoltage = BMS[0].getBatteryVoltage();
-    checkAllBMS(arrSize);
+    // packVoltage = BMS[0].getBatteryVoltage();
+    // checkAllBMS(arrSize);
   }
 
   if(turnOffLoad)
@@ -749,8 +828,10 @@ void loop() {
   if (millis() - lastTime > 1000)
   {
     Serial.println("Update Database");
-    postData(updateLink);
-    Serial.println(buildData());
+    // postData(updateLink);
+    pushData(updateLink);
+    // Serial.println(buildData());
+    Serial.println(createData());
     lastTime = millis();
   }
 
