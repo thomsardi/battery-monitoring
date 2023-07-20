@@ -28,14 +28,14 @@ char auth[] = "sGZwg34WR9aDxtGkJDJz4adtpwAgfzpj";
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-// const char *ssid = "fh_239b68";
-// const char *pass = "wlandc6497";
+const char *ssid = "TAPE MAS PUNGKI";
+const char *pass = "tapegosong";
 
-const char *ssid = "BLACKZONE";
-const char *pass = "tetanggamalingwifi02";
+// const char *ssid = "BLACKZONE";
+// const char *pass = "tetanggamalingwifi02";
 
-const char *createDatabaseLink = "http://192.168.1.6/mydatabase/createdatabase.php";
-const char *updateLink = "http://192.168.1.6/mydatabase/update.php";
+const char *createDatabaseLink = "http://192.168.1.5/mydatabase/createdatabase.php";
+const char *updateLink = "http://192.168.1.5/mydatabase/update.php";
 
 // bq769x0 BMS[3] = {bq769x0(bq76940, BMS_I2C_ADDRESS, 0), bq769x0(bq76940, BMS_I2C_ADDRESS, 1), bq769x0(bq76940, BMS_I2C_ADDRESS, 2)};
 bq769x0 BMS[1] = {bq769x0(bq76940, BMS_I2C_ADDRESS, 0)};
@@ -77,10 +77,16 @@ int cell[15] = {
   3622
 };
 int vpack;
-int temp[3] = {
+int temp[9] = {
   30,
   30,
-  27
+  27,
+  29,
+  28,
+  30,
+  33,
+  35,
+  33
 };
 
 unsigned long lastTime = 0;
@@ -699,7 +705,7 @@ void setup() {
     vpack += cell[i];
   }
   
-  createDatabase(createDatabaseLink);
+  // createDatabase(createDatabaseLink);
   server.on("/get-battery-data", HTTP_GET, [](AsyncWebServerRequest *request)
     {
       // String jsonOutput = buildData();
